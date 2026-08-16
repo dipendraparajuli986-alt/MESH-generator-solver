@@ -6,6 +6,8 @@ export function createNode(row, col) {
         isStart: false,
         isEnd: false,
         isVisited: false,
+        visitedBy: null,
+        pathBy: null,
     };
 }
 

@@ -2,14 +2,19 @@ import { useState } from "react";
 import { createGrid } from "../utils/mazeUtils";
 import { recursiveBacktracking } from "../generators/recursiveBacktracking";
 import { prim } from "../generators/prim";
+import { bfs } from "../algorithms/bfs";
+import { dfs } from "../algorithms/dfs";
+import { dijkstra } from "../algorithms/dijkstra";
+import { astar } from "../algorithms/astar";
 
 function MazeGrid() {
     const [grid, setGrid] = useState(() => createGrid(31, 51));
     const [isGenerating, setIsGenerating] = useState(false);
     const [algorithm, setAlgorithm] = useState("backtracking");
+    const [isPathfinding, setIsPathfinding] = useState(false);
 
     const toggleWall = (row, col) => {
-        if (isGenerating) return;
+        if (isGenerating || isPathfinding) return;
 
         setGrid((currentGrid) =>
             currentGrid.map((currentRow) =>
@@ -33,13 +38,13 @@ function MazeGrid() {
     };
 
     const resetGrid = () => {
-        if (isGenerating) return;
+        if (isGenerating || isPathfinding) return;
 
         setGrid(createGrid(31, 51));
     };
 
     const generateMaze = () => {
-        if (isGenerating) return;
+        if (isGenerating || isPathfinding) return;
 
         setIsGenerating(true);
 
@@ -55,6 +60,7 @@ function MazeGrid() {
                 ...node,
                 isWall: true,
                 isVisited: false,
+                isPath: false,
             }))
         );
 
@@ -93,13 +99,171 @@ function MazeGrid() {
         }, 20);
     };
 
+    const clearPathfinding = () => {
+        setGrid((currentGrid) =>
+            currentGrid.map((row) =>
+                row.map((node) => ({
+                    ...node,
+                    isVisited: false,
+                    isPath: false,
+                }))
+            )
+        );
+    };
+
+    const animatePathfinding = (result) => {
+        let stepIndex = 0;
+
+        const interval = setInterval(() => {
+            if (stepIndex >= result.steps.length) {
+                clearInterval(interval);
+
+                let pathIndex = 0;
+
+                const pathInterval = setInterval(() => {
+                    if (pathIndex >= result.path.length) {
+                        clearInterval(pathInterval);
+                        setIsPathfinding(false);
+                        return;
+                    }
+
+                    const pathNode = result.path[pathIndex];
+
+                    setGrid((currentGrid) =>
+                        currentGrid.map((row) =>
+                            row.map((node) =>
+                                node.row === pathNode.row &&
+                                node.col === pathNode.col
+                                    ? {
+                                          ...node,
+                                          isPath: true,
+                                      }
+                                    : node
+                            )
+                        )
+                    );
+
+                    pathIndex++;
+                }, 40);
+
+                return;
+            }
+
+            const step = result.steps[stepIndex];
+
+            setGrid((currentGrid) =>
+                currentGrid.map((row) =>
+                    row.map((node) =>
+                        node.row === step.row &&
+                        node.col === step.col
+                            ? {
+                                  ...node,
+                                  isVisited: true,
+                              }
+                            : node
+                    )
+                )
+            );
+
+            stepIndex++;
+        }, 20);
+    };
+
+    const runBFS = () => {
+        if (isGenerating || isPathfinding) return;
+
+        clearPathfinding();
+
+        setTimeout(() => {
+            setIsPathfinding(true);
+
+            const cleanGrid = grid.map((row) =>
+                row.map((node) => ({
+                    ...node,
+                    isVisited: false,
+                    isPath: false,
+                }))
+            );
+
+            const result = bfs(cleanGrid);
+
+            animatePathfinding(result);
+        }, 50);
+    };
+
+    const runDFS = () => {
+        if (isGenerating || isPathfinding) return;
+
+        clearPathfinding();
+
+        setTimeout(() => {
+            setIsPathfinding(true);
+
+            const cleanGrid = grid.map((row) =>
+                row.map((node) => ({
+                    ...node,
+                    isVisited: false,
+                    isPath: false,
+                }))
+            );
+
+            const result = dfs(cleanGrid);
+
+            animatePathfinding(result);
+        }, 50);
+    };
+
+    const runDijkstra = () => {
+        if (isGenerating || isPathfinding) return;
+
+        clearPathfinding();
+
+        setTimeout(() => {
+            setIsPathfinding(true);
+
+            const cleanGrid = grid.map((row) =>
+                row.map((node) => ({
+                    ...node,
+                    isVisited: false,
+                    isPath: false,
+                }))
+            );
+
+            const result = dijkstra(cleanGrid);
+
+            animatePathfinding(result);
+        }, 50);
+    };
+
+    const runAStar = () => {
+        if (isGenerating || isPathfinding) return;
+
+        clearPathfinding();
+
+        setTimeout(() => {
+            setIsPathfinding(true);
+
+            const cleanGrid = grid.map((row) =>
+                row.map((node) => ({
+                    ...node,
+                    isVisited: false,
+                    isPath: false,
+                }))
+            );
+
+            const result = astar(cleanGrid);
+
+            animatePathfinding(result);
+        }, 50);
+    };
+
     return (
         <div>
             <div className="controls">
                 <select
                     value={algorithm}
                     onChange={(e) => setAlgorithm(e.target.value)}
-                    disabled={isGenerating}
+                    disabled={isGenerating || isPathfinding}
                 >
                     <option value="backtracking">
                         Recursive Backtracking
@@ -112,7 +276,7 @@ function MazeGrid() {
 
                 <button
                     onClick={generateMaze}
-                    disabled={isGenerating}
+                    disabled={isGenerating || isPathfinding}
                 >
                     {isGenerating
                         ? "Generating..."
@@ -121,9 +285,37 @@ function MazeGrid() {
 
                 <button
                     onClick={resetGrid}
-                    disabled={isGenerating}
+                    disabled={isGenerating || isPathfinding}
                 >
                     Reset
+                </button>
+
+                <button
+                    onClick={runBFS}
+                    disabled={isGenerating || isPathfinding}
+                >
+                    Run BFS
+                </button>
+
+                <button
+                    onClick={runDFS}
+                    disabled={isGenerating || isPathfinding}
+                >
+                    Run DFS
+                </button>
+
+                <button
+                    onClick={runDijkstra}
+                    disabled={isGenerating || isPathfinding}
+                >
+                    Run Dijkstra
+                </button>
+
+                <button
+                    onClick={runAStar}
+                    disabled={isGenerating || isPathfinding}
+                >
+                    Run A*
                 </button>
             </div>
 
@@ -140,6 +332,10 @@ function MazeGrid() {
                                         ? "start"
                                         : node.isEnd
                                         ? "end"
+                                        : node.isPath
+                                        ? "path"
+                                        : node.isVisited
+                                        ? "visited"
                                         : node.isWall
                                         ? "wall"
                                         : ""

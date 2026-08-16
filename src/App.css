@@ -80,3 +80,11 @@ body {
     font-size: 16px;
     margin-right: 10px;
 }
+
+.grid-cell.visited {
+    background: #3b82f6;
+}
+
+.grid-cell.path {
+    background: #facc15;
+}
