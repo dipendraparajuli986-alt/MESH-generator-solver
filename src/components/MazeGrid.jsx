@@ -14,6 +14,10 @@ function MazeGrid() {
     const [algorithm, setAlgorithm] = useState("backtracking");
     const [isPathfinding, setIsPathfinding] = useState(false);
 
+    const GEN_SPEED = 3;
+    const SEARCH_SPEED = 8;
+    const PATH_SPEED = 10;
+
     const [stats, setStats] = useState({
         algorithm: "",
         time: 0,
@@ -22,6 +26,12 @@ function MazeGrid() {
     });
 
     const [scoreboard, setScoreboard] = useState([]);
+
+    const [liveStats, setLiveStats] = useState({
+    nodesVisited: 0,
+    elapsed: 0,
+    status: "idle",
+    });
 
     const toggleWall = (row, col) => {
         if (isGenerating || isPathfinding) return;
@@ -48,10 +58,19 @@ function MazeGrid() {
     };
 
     const resetGrid = () => {
-        if (isGenerating || isPathfinding) return;
+    if (isGenerating || isPathfinding) return;
 
-        setGrid(createGrid(31, 51));
-    };
+    setGrid(createGrid(31, 51));
+
+    setStats({
+        algorithm: "",
+        time: 0,
+        nodesVisited: 0,
+        pathLength: 0,
+    });
+
+    setScoreboard([]);
+};
 
     const generateMaze = () => {
         if (isGenerating || isPathfinding) return;
@@ -78,7 +97,7 @@ function MazeGrid() {
 
         let stepIndex = 0;
 
-        const interval = setInterval(() => {
+    const interval = setInterval(() => {
             if (stepIndex >= result.steps.length) {
                 clearInterval(interval);
                 setGrid(result.grid);
@@ -106,7 +125,7 @@ function MazeGrid() {
 
             setGrid(currentGrid);
             stepIndex++;
-        }, 20);
+        }, GEN_SPEED);
     };
 
     const clearPathfinding = () => {
@@ -122,62 +141,82 @@ function MazeGrid() {
     };
 
     const animatePathfinding = (result) => {
-        let stepIndex = 0;
+    let stepIndex = 0;
+    const startTime = performance.now();
 
-        const interval = setInterval(() => {
-            if (stepIndex >= result.steps.length) {
-                clearInterval(interval);
+    setLiveStats({
+        nodesVisited: 0,
+        elapsed: 0,
+        status: "solving",
+    });
 
-                let pathIndex = 0;
+    const interval = setInterval(() => {
+        if (stepIndex >= result.steps.length) {
+            clearInterval(interval);
 
-                const pathInterval = setInterval(() => {
-                    if (pathIndex >= result.path.length) {
-                        clearInterval(pathInterval);
-                        setIsPathfinding(false);
-                        return;
-                    }
+            let pathIndex = 0;
 
-                    const pathNode = result.path[pathIndex];
+            const pathInterval = setInterval(() => {
+                if (pathIndex >= result.path.length) {
+                    clearInterval(pathInterval);
 
-                    setGrid((currentGrid) =>
-                        currentGrid.map((row) =>
-                            row.map((node) =>
-                                node.row === pathNode.row &&
-                                node.col === pathNode.col
-                                    ? {
-                                          ...node,
-                                          isPath: true,
-                                      }
-                                    : node
-                            )
+                    setLiveStats((current) => ({
+                        ...current,
+                        elapsed: performance.now() - startTime,
+                        status: "completed",
+                    }));
+
+                    setIsPathfinding(false);
+                    return;
+                }
+
+                const pathNode = result.path[pathIndex];
+
+                setGrid((currentGrid) =>
+                    currentGrid.map((row) =>
+                        row.map((node) =>
+                            node.row === pathNode.row &&
+                            node.col === pathNode.col
+                                ? {
+                                      ...node,
+                                      isPath: true,
+                                  }
+                                : node
                         )
-                    );
-
-                    pathIndex++;
-                }, 40);
-
-                return;
-            }
-
-            const step = result.steps[stepIndex];
-
-            setGrid((currentGrid) =>
-                currentGrid.map((row) =>
-                    row.map((node) =>
-                        node.row === step.row &&
-                        node.col === step.col
-                            ? {
-                                  ...node,
-                                  isVisited: true,
-                              }
-                            : node
                     )
-                )
-            );
+                );
 
-            stepIndex++;
-        }, 20);
-    };
+                pathIndex++;
+            }, PATH_SPEED);
+
+            return;
+        }
+
+        const step = result.steps[stepIndex];
+
+        setGrid((currentGrid) =>
+            currentGrid.map((row) =>
+                row.map((node) =>
+                    node.row === step.row &&
+                    node.col === step.col
+                        ? {
+                              ...node,
+                              isVisited: true,
+                          }
+                        : node
+                )
+            )
+        );
+
+        stepIndex++;
+
+        setLiveStats({
+            nodesVisited: stepIndex,
+            elapsed: performance.now() - startTime,
+            status: "solving",
+        });
+    }, SEARCH_SPEED);
+};
 
     const runBFS = () => {
         if (isGenerating || isPathfinding) return;
@@ -219,7 +258,7 @@ setScoreboard((current) => [
 ]);
 
 animatePathfinding(result);
-        }, 50);
+        }, 20);
     };
 
     const runDFS = () => {
@@ -262,7 +301,7 @@ setScoreboard((current) => [
 ]);
 
 animatePathfinding(result);
-        }, 50);
+        }, 20);
     };
 
     
@@ -306,7 +345,7 @@ setScoreboard((current) => [
 ]);
 
 animatePathfinding(result);
-        }, 50);
+        }, 20);
     };
 
     
@@ -350,7 +389,7 @@ setScoreboard((current) => [
 ]);
 
 animatePathfinding(result);
-        }, 50);
+        }, 20);
     };
 
     return (
@@ -450,7 +489,7 @@ animatePathfinding(result);
                         ))}
                     </div>
                 ))}
-            </div> <Stats stats={stats} scoreboard={scoreboard} />
+            </div> <Stats stats={stats} scoreboard={scoreboard} liveStats={liveStats} />
         </div>
     );
 }

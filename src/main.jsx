@@ -4,6 +4,7 @@ import App from './App.jsx'
 import './App.css'
 import { createGrid, getNeighbours } from "./utils/mazeUtils";
 import MazeGrid from './components/MazeGrid.jsx';
+
 const grid = createGrid(60,50);
 console.log("Start:", grid[30][2]);
 console.log("End:", grid[30][47]);

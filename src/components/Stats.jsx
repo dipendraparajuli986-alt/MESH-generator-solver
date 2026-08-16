@@ -1,7 +1,36 @@
-function Stats({ stats, scoreboard }) {
+import { quickSort } from "../sorting/quickSort";
+
+function Stats({ stats, scoreboard, liveStats }) {
+    const sortedScoreboard = quickSort(scoreboard);
+
     return (
         <div className="stats">
 
+            {/* Live solving information */}
+            {liveStats.status === "solving" && (
+                <div className="live-stats">
+                    <h2> Attempting </h2>
+
+                    <p>
+                        <strong>Elapsed:</strong>{" "}
+                        {(liveStats.elapsed / 1000).toFixed(2)} s
+                    </p>
+
+                    <p>
+                        <strong>Nodes Visited:</strong>{" "}
+                        {liveStats.nodesVisited}
+                    </p>
+                </div>
+            )}
+
+            {/* Completed status */}
+            {liveStats.status === "completed" && (
+                <div className="live-stats">
+                    <h2>Performed</h2>
+                </div>
+            )}
+
+            {/* Current run */}
             <h2>Current Run</h2>
 
             <p>
@@ -24,7 +53,7 @@ function Stats({ stats, scoreboard }) {
                 {stats.pathLength}
             </p>
 
-
+            {/* Performance scoreboard */}
             {scoreboard.length > 0 && (
                 <>
                     <h2>Performance Board</h2>
@@ -40,7 +69,7 @@ function Stats({ stats, scoreboard }) {
                         </thead>
 
                         <tbody>
-                            {scoreboard.map((run, index) => (
+                            {sortedScoreboard.map((run, index) => (
                                 <tr key={index}>
                                     <td>{run.algorithm}</td>
                                     <td>{run.time.toFixed(3)}</td>
