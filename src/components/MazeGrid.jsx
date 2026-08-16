@@ -34,18 +34,21 @@ function MazeGrid(){
             <div className="grid-row" key={rowIndex}>
                 {row.map((node) => (
                     <div
-                        className={`grid-cell ${
-                        node.isWall
-                        ? "wall"
-                        : node.isStart
-                        ? "start"
-                        : node.isEnd
-                        ? "end"
-                        : ""
-                        }`}
-                        key={`${node.row}-${node.col}`}
-                        onClick={() => toggleWall(node.row, node.col)}
-                    ></div>
+    className={`grid-cell ${
+        node.isStart
+            ? "start"
+            : node.isEnd
+            ? "end"
+            : node.isWall
+            ? "wall"
+            : ""
+    }`}
+    key={`${node.row}-${node.col}`}
+    onClick={() => toggleWall(node.row, node.col)}
+>
+    {node.isStart && "S"}
+    {node.isEnd && "E"}
+    </div>
                 ))}
             </div>
         ))}
