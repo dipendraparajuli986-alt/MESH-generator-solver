@@ -2,9 +2,16 @@ import MazeGrid from "./components/MazeGrid";
 
 function App() {
     return (
-        <div>
-            <h1>Mazelab</h1>
-            <MazeGrid />
+        <div className="app-container">
+            <header className="app-header">
+                <h1>Maze Generator & Solver</h1>
+                <p className="app-description">
+
+                </p>
+            </header>
+            <main>
+                <MazeGrid />
+            </main>
         </div>
     );
 }

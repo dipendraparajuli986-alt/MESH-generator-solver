@@ -393,103 +393,138 @@ animatePathfinding(result);
     };
 
     return (
-        <div>
-            <div className="controls">
-                <select
-                    value={algorithm}
-                    onChange={(e) => setAlgorithm(e.target.value)}
-                    disabled={isGenerating || isPathfinding}
-                >
-                    <option value="backtracking">
-                        Recursive Backtracking
-                    </option>
+        <div className="maze-workspace">
+            <div className="controls-panel">
+                <div className="control-group">
+                    <span className="control-label">Maze Generator</span>
+                    <div className="control-row">
+                        <select
+                            className="select-input"
+                            value={algorithm}
+                            onChange={(e) => setAlgorithm(e.target.value)}
+                            disabled={isGenerating || isPathfinding}
+                        >
+                            <option value="backtracking">
+                                Recursive Backtracking
+                            </option>
+                            <option value="prim">
+                                Prim's Algorithm
+                            </option>
+                        </select>
 
-                    <option value="prim">
-                        Prim's Algorithm
-                    </option>
-                </select>
+                        <button
+                            className="btn btn-primary"
+                            onClick={generateMaze}
+                            disabled={isGenerating || isPathfinding}
+                        >
+                            {isGenerating ? "Generating..." : "Generate Maze"}
+                        </button>
+                    </div>
+                </div>
 
-                <button
-                    onClick={generateMaze}
-                    disabled={isGenerating || isPathfinding}
-                >
-                    {isGenerating
-                        ? "Generating..."
-                        : "Generate Maze"}
-                </button>
+                <div className="control-group">
+                    <span className="control-label">Pathfinding Algorithms</span>
+                    <div className="control-row">
+                        <button
+                            className="btn btn-secondary"
+                            onClick={runBFS}
+                            disabled={isGenerating || isPathfinding}
+                        >
+                            Run BFS
+                        </button>
+                        <button
+                            className="btn btn-secondary"
+                            onClick={runDFS}
+                            disabled={isGenerating || isPathfinding}
+                        >
+                            Run DFS
+                        </button>
+                        <button
+                            className="btn btn-secondary"
+                            onClick={runDijkstra}
+                            disabled={isGenerating || isPathfinding}
+                        >
+                            Run Dijkstra
+                        </button>
+                        <button
+                            className="btn btn-secondary"
+                            onClick={runAStar}
+                            disabled={isGenerating || isPathfinding}
+                        >
+                            Run A*
+                        </button>
+                    </div>
+                </div>
 
-                <button
-                    onClick={resetGrid}
-                    disabled={isGenerating || isPathfinding}
-                >
-                    Reset
-                </button>
-
-                <button
-                    onClick={runBFS}
-                    disabled={isGenerating || isPathfinding}
-                >
-                    Run BFS
-                </button>
-
-                <button
-                    onClick={runDFS}
-                    disabled={isGenerating || isPathfinding}
-                >
-                    Run DFS
-                </button>
-
-                <button
-                    onClick={runDijkstra}
-                    disabled={isGenerating || isPathfinding}
-                >
-                    Run Dijkstra
-                </button>
-
-                <button
-                    onClick={runAStar}
-                    disabled={isGenerating || isPathfinding}
-                >
-                    Run A*
-                </button>
+                <div className="control-group reset-group">
+                    <span className="control-label">&nbsp;</span>
+                    <button
+                        className="btn btn-reset"
+                        onClick={resetGrid}
+                        disabled={isGenerating || isPathfinding}
+                    >
+                        Reset Grid
+                    </button>
+                </div>
             </div>
 
-            <div className="maze-grid">
-                {grid.map((row, rowIndex) => (
-                    <div
-                        className="grid-row"
-                        key={rowIndex}
-                    >
-                        {row.map((node) => (
-                            <div
-                                className={`grid-cell ${
-                                    node.isStart
-                                        ? "start"
-                                        : node.isEnd
-                                        ? "end"
-                                        : node.isPath
-                                        ? "path"
-                                        : node.isVisited
-                                        ? "visited"
-                                        : node.isWall
-                                        ? "wall"
-                                        : ""
-                                }`}
-                                key={`${node.row}-${node.col}`}
-                                onClick={() =>
-                                    toggleWall(
-                                        node.row,
-                                        node.col
-                                    )
-                                }
-                            >
-                                {node.isStart && "S"}
-                                {node.isEnd && "E"}
-                            </div>
-                        ))}
-                    </div>
-                ))}
-            </div> <Stats stats={stats} scoreboard={scoreboard} liveStats={liveStats} />
+            <div className="legend-bar">
+                <div className="legend-item">
+                    <span className="cell-sample start">S</span>
+                    <span>Start</span>
+                </div>
+                <div className="legend-item">
+                    <span className="cell-sample end">E</span>
+                    <span>End</span>
+                </div>
+                <div className="legend-item">
+                    <span className="cell-sample wall"></span>
+                    <span>Wall</span>
+                </div>
+                <div className="legend-item">
+                    <span className="cell-sample visited"></span>
+                    <span>Visited</span>
+                </div>
+                <div className="legend-item">
+                    <span className="cell-sample path"></span>
+                    <span>Shortest Path</span>
+                </div>
+            </div>
+
+            <div className="maze-grid-wrapper">
+                <div className="maze-grid">
+                    {grid.map((row, rowIndex) => (
+                        <div className="grid-row" key={rowIndex}>
+                            {row.map((node) => (
+                                <div
+                                    className={`grid-cell ${
+                                        node.isStart
+                                            ? "start"
+                                            : node.isEnd
+                                            ? "end"
+                                            : node.isPath
+                                            ? "path"
+                                            : node.isVisited
+                                            ? "visited"
+                                            : node.isWall
+                                            ? "wall"
+                                            : ""
+                                    }`}
+                                    key={`${node.row}-${node.col}`}
+                                    onClick={() =>
+                                        toggleWall(node.row, node.col)
+                                    }
+                                >
+                                    {node.isStart && "S"}
+                                    {node.isEnd && "E"}
+                                </div>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <Stats stats={stats} scoreboard={scoreboard} liveStats={liveStats} />
         </div>
     );
 }
