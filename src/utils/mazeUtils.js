@@ -2,7 +2,7 @@ export function createNode(row, col) {
     return {
         row,
         col,
-        isWall: false,
+        isWall: true,
         isStart: false,
         isEnd: false,
         isVisited: false,
@@ -21,6 +21,15 @@ export function createGrid(rows, cols) {
 
         grid.push(currentRow);
     }
+
+    const startRow = Math.floor(rows / 2);
+    const startCol = 2;
+
+    const endRow = Math.floor(rows/ 2);
+    const endCol = cols -3;
+
+    grid[startRow][startCol].isStart = true;
+    grid[endRow][endCol].isEnd = true;
 
     return grid;
 }

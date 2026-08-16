@@ -3,9 +3,10 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './App.css'
 import { createGrid, getNeighbours } from "./utils/mazeUtils";
-
-const grid = createGrid(5, 5);
-
+import MazeGrid from './components/MazeGrid.jsx';
+const grid = createGrid(60,50);
+console.log("Start:", grid[30][2]);
+console.log("End:", grid[30][47]);
 console.log("Grid:", grid);
 
 console.log("Center node:", grid[2][2]);

@@ -4,7 +4,7 @@ function App() {
     return (
         <div>
             <h1>Mazelab</h1>
-            <MazeGrid />
+            <MazeGrid/>
         </div>
     );
 }

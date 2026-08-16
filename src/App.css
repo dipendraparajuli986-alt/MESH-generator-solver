@@ -7,6 +7,7 @@ body {
 
 #root {
     width: 100%;
+    min-height: 100vh;
 }
 
 .maze-grid {
@@ -21,8 +22,28 @@ body {
 }
 
 .grid-cell {
-    width: 25px;
-    height: 25px;
+    width: 14px;
+    height: 14px;
     border: 1px solid #374151;
     box-sizing: border-box;
+    background: #111827;
+    cursor: pointer;
+}
+
+.grid-cell:hover {
+    background: #1f2937;
+}
+
+.grid-cell.wall {
+    background: #374151;
+}
+
+.grid-cell.start {
+    background: #22c55e;
+    border: 2px solid white;
+}
+
+.grid-cell.end {
+    background: #ef4444;
+    border: 2px solid white;
 }
