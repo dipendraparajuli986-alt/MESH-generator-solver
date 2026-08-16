@@ -22,11 +22,21 @@ export function createGrid(rows, cols) {
         grid.push(currentRow);
     }
 
-    const startRow = Math.floor(rows / 2);
-    const startCol = 2;
+    // Start and end positions
+    let startRow = Math.floor(rows / 2);
 
-    const endRow = Math.floor(rows/ 2);
-    const endCol = cols -3;
+    if (startRow % 2 === 0) {
+        startRow--;
+    }
+
+    const startCol = 1;
+
+    let endRow = startRow;
+    let endCol = cols - 2;
+
+    if (endCol % 2 === 0) {
+        endCol--;
+    }
 
     grid[startRow][startCol].isStart = true;
     grid[endRow][endCol].isEnd = true;

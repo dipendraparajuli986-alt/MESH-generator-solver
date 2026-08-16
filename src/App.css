@@ -47,3 +47,36 @@ body {
     background: #ef4444;
     border: 2px solid white;
 }
+
+.controls {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.controls button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #2563eb;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.controls button:hover {
+    background: #1d4ed8;
+}
+
+.controls button:disabled {
+    background: #4b5563;
+    cursor: not-allowed;
+}
+
+.controls select {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-right: 10px;
+}
