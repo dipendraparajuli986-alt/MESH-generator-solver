@@ -88,3 +88,25 @@ body {
 .grid-cell.path {
     background: #facc15;
 }
+
+.scoreboard {
+    width: 100%;
+    margin-top: 15px;
+    border-collapse: collapse;
+}
+
+.scoreboard th,
+.scoreboard td {
+    padding: 10px;
+    border: 1px solid #374151;
+    text-align: center;
+}
+
+.scoreboard th {
+    background: #374151;
+    color: white;
+}
+
+.scoreboard td {
+    background: #111827;
+}

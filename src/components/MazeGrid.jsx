@@ -6,12 +6,22 @@ import { bfs } from "../algorithms/bfs";
 import { dfs } from "../algorithms/dfs";
 import { dijkstra } from "../algorithms/dijkstra";
 import { astar } from "../algorithms/astar";
+import Stats from "./Stats";
 
 function MazeGrid() {
     const [grid, setGrid] = useState(() => createGrid(31, 51));
     const [isGenerating, setIsGenerating] = useState(false);
     const [algorithm, setAlgorithm] = useState("backtracking");
     const [isPathfinding, setIsPathfinding] = useState(false);
+
+    const [stats, setStats] = useState({
+        algorithm: "",
+        time: 0,
+        nodesVisited: 0,
+        pathLength: 0,
+    });
+
+    const [scoreboard, setScoreboard] = useState([]);
 
     const toggleWall = (row, col) => {
         if (isGenerating || isPathfinding) return;
@@ -185,9 +195,30 @@ function MazeGrid() {
                 }))
             );
 
-            const result = bfs(cleanGrid);
+            const startTime = performance.now();
 
-            animatePathfinding(result);
+const result = bfs(cleanGrid);
+
+const endTime = performance.now();
+
+setStats({
+    algorithm: "BFS",
+    time: endTime - startTime,
+    nodesVisited: result.steps.length,
+    pathLength: result.path.length,
+});
+
+setScoreboard((current) => [
+    ...current,
+    {
+        algorithm: "BFS",
+        time: endTime - startTime,
+        nodesVisited: result.steps.length,
+        pathLength: result.path.length,
+    },
+]);
+
+animatePathfinding(result);
         }, 50);
     };
 
@@ -207,12 +238,34 @@ function MazeGrid() {
                 }))
             );
 
-            const result = dfs(cleanGrid);
+            const startTime = performance.now();
 
-            animatePathfinding(result);
+const result = dfs(cleanGrid);
+
+const endTime = performance.now();
+
+setStats({
+    algorithm: "DFS",
+    time: endTime - startTime,
+    nodesVisited: result.steps.length,
+    pathLength: result.path.length,
+});
+
+setScoreboard((current) => [
+    ...current,
+    {
+        algorithm: "DFS",
+        time: endTime - startTime,
+        nodesVisited: result.steps.length,
+        pathLength: result.path.length,
+    },
+]);
+
+animatePathfinding(result);
         }, 50);
     };
 
+    
     const runDijkstra = () => {
         if (isGenerating || isPathfinding) return;
 
@@ -229,12 +282,34 @@ function MazeGrid() {
                 }))
             );
 
-            const result = dijkstra(cleanGrid);
+           const startTime = performance.now();
 
-            animatePathfinding(result);
+const result = dijkstra(cleanGrid);
+
+const endTime = performance.now();
+
+setStats({
+    algorithm: "Dijkstra",
+    time: endTime - startTime,
+    nodesVisited: result.steps.length,
+    pathLength: result.path.length,
+});
+
+setScoreboard((current) => [
+    ...current,
+    {
+        algorithm: "Dijkstra",
+        time: endTime - startTime,
+        nodesVisited: result.steps.length,
+        pathLength: result.path.length,
+    },
+]);
+
+animatePathfinding(result);
         }, 50);
     };
 
+    
     const runAStar = () => {
         if (isGenerating || isPathfinding) return;
 
@@ -251,9 +326,30 @@ function MazeGrid() {
                 }))
             );
 
-            const result = astar(cleanGrid);
+            const startTime = performance.now();
 
-            animatePathfinding(result);
+const result = astar(cleanGrid);
+
+const endTime = performance.now();
+
+setStats({
+    algorithm: "A*",
+    time: endTime - startTime,
+    nodesVisited: result.steps.length,
+    pathLength: result.path.length,
+});
+
+setScoreboard((current) => [
+    ...current,
+    {
+        algorithm: "A*",
+        time: endTime - startTime,
+        nodesVisited: result.steps.length,
+        pathLength: result.path.length,
+    },
+]);
+
+animatePathfinding(result);
         }, 50);
     };
 
@@ -354,7 +450,7 @@ function MazeGrid() {
                         ))}
                     </div>
                 ))}
-            </div>
+            </div> <Stats stats={stats} scoreboard={scoreboard} />
         </div>
     );
 }
